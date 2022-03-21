@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs.Models;
+﻿using Azure.Models;
 
 namespace Azure.Services.Interfaces
 {

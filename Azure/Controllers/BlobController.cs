@@ -13,11 +13,13 @@ namespace Azure.Controllers
             _blobService = blobService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetBlob([FromQuery] GetBlobRequest request)
+        [HttpGet("{blobName}")]
+        public async Task<IActionResult> GetBlob(string blobName)
         {
-            var blob = await _blobService.GetBlobAsync("");
-            return Ok(blob);
+            var blob = await _blobService.GetBlobAsync(blobName);
+            var file = File(blob.Data.ToStream(), blob.ContentType);
+            file.FileDownloadName = "Test";
+            return file;
         }
 
         [HttpPost]
