@@ -16,9 +16,9 @@ namespace Azure.Controllers
         [HttpGet("{blobName}")]
         public async Task<IActionResult> GetBlob(string blobName)
         {
-            var blob = await _blobService.GetBlobAsync(blobName);
+            var blob = await _blobService.GetBlobAsync($"{blobName}.pdf");
             var file = File(blob.Data.ToStream(), blob.ContentType);
-            file.FileDownloadName = "Test";
+            file.FileDownloadName = "Renamed.pdf";
             return file;
         }
 
