@@ -1,6 +1,7 @@
 ﻿using Azure.Models;
 using Azure.Services.Interfaces;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace Azure.Services
 {
@@ -14,7 +15,7 @@ namespace Azure.Services
             _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<BlobInfo> GetBlobAsync(string name)
+        public async Task<BlobInfoModel> GetBlobAsync(string name)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient("pdfs");
             var blobClient = containerClient.GetBlobClient(name);
@@ -22,7 +23,7 @@ namespace Azure.Services
             try
             {
                 var response = await blobClient.DownloadContentAsync();
-                return new BlobInfo(response.Value.Content, response.Value.Details.ContentType);
+                return new BlobInfoModel(response.Value.Content, response.Value.Details.ContentType);
             }
             catch (RequestFailedException ex)
             {
@@ -42,9 +43,37 @@ namespace Azure.Services
             }
         }
 
-        public Task UploadFileBlobAsync(string filePath, string fileName)
+        public async Task<bool> UploadFileBlobAsync(string filePath, string fileName, bool bOverride = true)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            var containerClient = _blobServiceClient.GetBlobContainerClient("pdfs");
+            Response<BlobContentInfo> response;
+            try
+            {
+                using FileStream uploadFileStream = File.OpenRead(filePath);
+                if (bOverride)
+                {
+                    var blobClient = containerClient.GetBlobClient(fileName);
+                    response = await blobClient.UploadAsync(uploadFileStream, overwrite: true);
+                }
+                else
+                {
+                    response = await containerClient.UploadBlobAsync(fileName, uploadFileStream);
+                }
+            }
+            catch (RequestFailedException rfe)
+            {
+                var s = rfe.Status;
+                return result;
+            }
+            catch(Exception ex)
+            {
+                var s = ex.InnerException;
+                return result;
+            }
+
+            result = true;
+            return result;
         }
     }
 }

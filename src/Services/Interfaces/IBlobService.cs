@@ -4,8 +4,8 @@ namespace Azure.Services.Interfaces
 {
     public interface IBlobService
     {
-        public Task<BlobInfo> GetBlobAsync(string name);
+        public Task<BlobInfoModel> GetBlobAsync(string name);
 
-        public Task UploadFileBlobAsync(string filePath, string fileName);
+        public Task<bool> UploadFileBlobAsync(string filePath, string fileName, bool bOverride = false);
     }
 }

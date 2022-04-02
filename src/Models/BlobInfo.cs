@@ -1,11 +1,11 @@
 ﻿namespace Azure.Models
 {
-    public class BlobInfo
+    public class BlobInfoModel
     {
         public BinaryData Data { get; }
         public string ContentType { get; }
 
-        public BlobInfo(BinaryData data, string contentType)
+        public BlobInfoModel(BinaryData data, string contentType)
         {
             Data = data;
             ContentType = contentType;
